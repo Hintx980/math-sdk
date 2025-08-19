@@ -14,7 +14,7 @@ class GameExecutables(GameCalculations):
         import random
 
         feature_pool = ["wild", "mult", "tnt", "respin", "prize"]
-        count = 4 if self.criteria == "super" else 2
+        count = 3 if self.criteria == "super" else 1
         self.active_features_this_spin = random.sample(feature_pool, k=count)
 
     def get_clusters_update_wins(self):
