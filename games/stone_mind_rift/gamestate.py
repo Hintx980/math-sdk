@@ -29,6 +29,9 @@ class GameState(GameStateOverride, Board):
                 self.choose_features_for_spin()
                 self.draw_board()
                 self._resolve_with_tumbles_and_optional_respin()
+                # Assign spin wins to basegame and finalize spin total
+                self.set_end_tumble_event()
+                self.win_manager.update_gametype_wins(self.gametype)
 
             self.evaluate_finalwin()
 
@@ -43,6 +46,9 @@ class GameState(GameStateOverride, Board):
             self.choose_features_for_spin()
             self.draw_board()
             self._resolve_with_tumbles_and_optional_respin()
+            # Assign each FS spin wins to freegame and finalize spin total
+            self.set_end_tumble_event()
+            self.win_manager.update_gametype_wins(self.gametype)
 
         self.end_freespin()
 
