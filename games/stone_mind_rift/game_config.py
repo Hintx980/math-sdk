@@ -115,7 +115,7 @@ class GameConfig(Config):
             # Super Buy: direct entry to 5-spin super mode with strong multipliers
             BetMode(
                 name="super_buy",
-                cost=6.5,
+                cost=5.4,
                 rtp=self.rtp,
                 max_win=self.wincap,
                 auto_close_disabled=False,

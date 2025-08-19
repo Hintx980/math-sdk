@@ -44,8 +44,12 @@ class GameState(GameStateOverride, Board):
                 # Assign spin wins to basegame and finalize spin total
                 self.set_end_tumble_event()
                 self.win_manager.update_gametype_wins(self.gametype)
+                # Ensure final win reflects assigned gametype wins for normal spin
+                self.win_manager.set_spin_win(0.0)
 
             self.evaluate_finalwin()
+            # Force consistency: align running total to base+free
+            self.win_manager.running_bet_win = self.win_manager.basegame_wins + self.win_manager.freegame_wins
 
         self.imprint_wins()
 
@@ -61,6 +65,7 @@ class GameState(GameStateOverride, Board):
             # Assign each FS spin wins to freegame and finalize spin total
             self.set_end_tumble_event()
             self.win_manager.update_gametype_wins(self.gametype)
+            self.win_manager.set_spin_win(0.0)
 
         self.end_freespin()
 
@@ -87,13 +92,13 @@ class GameState(GameStateOverride, Board):
                 self.get_clusters_update_wins()
                 self.emit_tumble_win_events()
 
-        # Second-chance respin: if dead spin in normal mode and respin not selected, 10% chance
+        # Second-chance respin: if dead spin in normal mode and respin not selected, 12% chance
         import random
         if (
             self.criteria == "normal"
             and (self.win_manager.spin_win == 0)
             and (not (hasattr(self, "active_features_this_spin") and "respin" in self.active_features_this_spin))
-            and random.random() < 0.10
+            and random.random() < 0.12
         ):
             for r in range(self.config.num_reels):
                 for c in range(self.config.num_rows[r]):
@@ -104,5 +109,25 @@ class GameState(GameStateOverride, Board):
             while self.win_data["totalWin"] > 0 and not (self.wincap_triggered):
                 self.tumble_game_board()
                 self.get_clusters_update_wins()
+                self.emit_tumble_win_events()
+
+        # Tiny consolation wins on dead spins (dopamine) without inflating RTP too much
+        if self.win_manager.spin_win == 0:
+            if random.random() < 0.08:
+                consolation = round(random.uniform(0.05, 0.10), 3)
+                # Record as a simple win entry (no positions)
+                self.win_data = {
+                    "totalWin": consolation,
+                    "wins": [
+                        {
+                            "symbol": "CONS",
+                            "clusterSize": 1,
+                            "win": consolation,
+                            "positions": [],
+                            "meta": {"kind": "consolation", "winWithoutMult": consolation},
+                        }
+                    ],
+                }
+                self.win_manager.update_spinwin(consolation)
                 self.emit_tumble_win_events()
 
