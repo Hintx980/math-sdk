@@ -206,10 +206,12 @@ class Board(GeneralGameState):
             and self.gametype == self.config.basegame_type
         ):
             self.create_board_reelstrips()
-            while self.count_special_symbols(trigger_symbol) >= min(
-                self.config.freespin_triggers[self.gametype].keys()
-            ):
-                self.create_board_reelstrips()
+            # If no scatter triggers configured, skip anti-scatter redraw loop
+            if len(self.config.freespin_triggers.get(self.gametype, {})) > 0:
+                while self.count_special_symbols(trigger_symbol) >= min(
+                    self.config.freespin_triggers[self.gametype].keys()
+                ):
+                    self.create_board_reelstrips()
         else:
             self.create_board_reelstrips()
         if emit_event:

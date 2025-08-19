@@ -44,6 +44,9 @@ def get_distribution_moments(dist: dict) -> float:
 
     skewness, kurtosis = 0.0, 0.0
     av_win = float(av_win)
+    if standard_dev == 0:
+        # Degenerate distribution (all wins equal). Return zero skew/kurtosis.
+        return variance, standard_dev, 0.0, 0.0
     for win, weight in dist.items():
         skewness += ((win - av_win) ** 3) * weight
         kurtosis += ((win - av_win) ** 4) * weight
