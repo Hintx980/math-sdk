@@ -13,6 +13,22 @@ from utils.game_analytics.run_analysis import create_stat_sheet
 from utils.rgs_verification import execute_all_tests
 from src.state.run_sims import create_books
 from src.write_data.write_configs import generate_configs
+import json
+
+
+def ensure_force_files(gamestate):
+    os.makedirs(gamestate.output_files.force_path, exist_ok=True)
+    # force.json placeholder
+    fj = os.path.join(gamestate.output_files.force_path, "force.json")
+    if not os.path.exists(fj):
+        with open(fj, "w", encoding="UTF-8") as f:
+            json.dump({}, f)
+    # per-mode force_record placeholders
+    for bm in gamestate.config.bet_modes:
+        rec_path = gamestate.output_files.force[bm.get_name()]["paths"]["force_record"]
+        if not os.path.exists(rec_path):
+            with open(rec_path, "w", encoding="UTF-8") as f:
+                json.dump([], f)
 
 if __name__ == "__main__":
 
@@ -32,6 +48,7 @@ if __name__ == "__main__":
         "run_optimization": False,
         "run_analysis": False,
         "upload_data": False,
+        "run_configs": False,
     }
     target_modes = ["base", "super_buy"]
 
@@ -51,7 +68,10 @@ if __name__ == "__main__":
             profiling,
         )
 
-    generate_configs(gamestate)
+    ensure_force_files(gamestate)
+    if run_conditions["run_configs"]:
+        ensure_force_files(gamestate)
+        generate_configs(gamestate)
 
     if run_conditions["run_optimization"]:
         OptimizationExecution().run_all_modes(config, target_modes, rust_threads)

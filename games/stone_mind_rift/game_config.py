@@ -59,11 +59,8 @@ class GameConfig(Config):
             "prize": ["mni", "maj", "meg", "max"],
         }
 
-        # We don't use scatters for trigger visuals; keep minimal triggers
-        self.freespin_triggers = {
-            self.basegame_type: {1: 5},  # portal -> 5 spins
-            self.freegame_type: {1: 5},
-        }
+        # We do not use scatter; set empty to disable FS checks in draw flow
+        self.freespin_triggers = {self.basegame_type: {}, self.freegame_type: {}}
         self.anticipation_triggers = {self.basegame_type: 0, self.freegame_type: 0}
 
         # Reels
