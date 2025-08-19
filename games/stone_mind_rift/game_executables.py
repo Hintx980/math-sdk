@@ -14,8 +14,18 @@ class GameExecutables(GameCalculations):
         import random
 
         feature_pool = ["wild", "mult", "tnt", "respin", "prize"]
-        count = 3 if self.criteria == "super" else 1
+        count = 3 if self.criteria == "super" else 2
         self.active_features_this_spin = random.sample(feature_pool, k=count)
+
+    def emit_portal_event(self, percent: float, threshold: float = 0.9):
+        # lightweight json in book for FE consumption
+        event = {
+            "index": len(self.book.events),
+            "type": "PORTAL",
+            "percent": round(percent, 3),
+            "threshold": threshold,
+        }
+        self.book.add_event(event)
 
     def get_clusters_update_wins(self):
         wild_key = "wild" if (hasattr(self, "active_features_this_spin") and "wild" in self.active_features_this_spin) else "__no_wild__"

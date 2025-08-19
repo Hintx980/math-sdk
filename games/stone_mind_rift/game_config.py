@@ -83,7 +83,7 @@ class GameConfig(Config):
                 distributions=[
                     Distribution(
                         criteria="super",
-                        quota=0.07,
+                        quota=0.05,
                         conditions={
                             "reel_weights": {
                                 self.basegame_type: {"BR0": 1},
@@ -99,7 +99,7 @@ class GameConfig(Config):
                     ),
                     Distribution(
                         criteria="normal",
-                        quota=0.93,
+                        quota=0.95,
                         conditions={
                             "reel_weights": {self.basegame_type: {"BR0": 1}},
                             "force_freegame": False,
@@ -115,7 +115,7 @@ class GameConfig(Config):
             # Super Buy: direct entry to 5-spin super mode with strong multipliers
             BetMode(
                 name="super_buy",
-                cost=12.0,
+                cost=6.5,
                 rtp=self.rtp,
                 max_win=self.wincap,
                 auto_close_disabled=False,
